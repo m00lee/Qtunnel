@@ -155,6 +155,20 @@ impl CFApi {
         Self::handle_response(resp).await
     }
 
+    pub(crate) async fn patch(&self, url: &str, payload: &Value) -> Result<Value, AppError> {
+        let resp = self
+            .client
+            .patch(url)
+            .header("Authorization", self.auth_header()?)
+            .header("Content-Type", "application/json")
+            .json(payload)
+            .send()
+            .await
+            .map_err(Self::map_network_error)?;
+
+        Self::handle_response(resp).await
+    }
+
     // ── 内部辅助 ─────────────────────────────────────
 
     async fn handle_response(resp: reqwest::Response) -> Result<Value, AppError> {

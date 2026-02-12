@@ -6,6 +6,7 @@ pub mod local_service;
 pub mod certificate;
 pub mod security;
 pub mod script;
+pub mod zone;
 
 pub use tunnel::*;
 pub use route::*;
@@ -13,6 +14,7 @@ pub use local_service::*;
 pub use certificate::*;
 pub use security::*;
 pub use script::*;
+pub use zone::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApiError {

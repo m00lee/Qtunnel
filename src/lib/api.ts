@@ -323,3 +323,78 @@ export function stopTunnel(tunnelId: string) {
 export function getRunningTunnels() {
   return call<string[]>('get_running_tunnels')
 }
+
+// ====== Zone Management Types ======
+
+export interface ZoneAnalytics {
+  requests: { all: number; cached: number; uncached: number }
+  bandwidth: { all: number; cached: number; uncached: number }
+  threats: { all: number }
+  uniques: { all: number }
+  pageviews: { all: number }
+}
+
+export interface ZoneSetting {
+  id: string
+  value: unknown
+  editable: boolean
+  modified_on: string | null
+}
+
+export interface FlatRule {
+  id: string
+  ruleset_id: string
+  phase: string
+  action: string
+  expression: string
+  description: string
+  enabled: boolean
+  action_parameters?: unknown
+}
+
+export interface PurgeResult {
+  id: string
+}
+
+// ====== Zone Analytics API ======
+
+export function getZoneAnalytics(zoneId: string, sinceMinutes?: number) {
+  return call<ZoneAnalytics>('get_zone_analytics', { zoneId, sinceMinutes })
+}
+
+// ====== Zone Settings API ======
+
+export function getZoneSettings(zoneId: string) {
+  return call<ZoneSetting[]>('get_zone_settings', { zoneId })
+}
+
+export function updateZoneSetting(zoneId: string, settingId: string, value: unknown) {
+  return call<ZoneSetting>('update_zone_setting', { zoneId, settingId, value })
+}
+
+// ====== Cache Purge API ======
+
+export function purgeAllCache(zoneId: string) {
+  return call<PurgeResult>('purge_all_cache', { zoneId })
+}
+
+export function purgeCacheByUrls(zoneId: string, urls: string[]) {
+  return call<PurgeResult>('purge_cache_by_urls', { zoneId, urls })
+}
+
+// ====== Rulesets API ======
+
+export function listRules(zoneId: string) {
+  return call<FlatRule[]>('list_rules', { zoneId })
+}
+
+export function createRule(
+  zoneId: string, phase: string, expression: string,
+  action: string, actionParameters: unknown, description: string
+) {
+  return call<FlatRule>('create_rule', { zoneId, phase, expression, action, actionParameters, description })
+}
+
+export function deleteRule(zoneId: string, rulesetId: string, ruleId: string) {
+  return call<void>('delete_rule', { zoneId, rulesetId, ruleId })
+}

@@ -6,3 +6,4 @@ pub mod security;
 pub mod cache;
 pub mod config;
 pub mod scripting;
+pub mod zone;
