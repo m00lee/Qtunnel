@@ -13,6 +13,8 @@ interface AppState {
   setActiveTab: (tab: string) => void
   theme: 'light' | 'dark'
   setTheme: (theme: 'light' | 'dark') => void
+  density: 'comfortable' | 'compact'
+  setDensity: (d: 'comfortable' | 'compact') => void
   sidebarCollapsed: boolean
   setSidebarCollapsed: (collapsed: boolean) => void
   connectionStatus: 'connected' | 'disconnected' | 'checking'
@@ -24,8 +26,10 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   activeTab: 'tunnels',
   setActiveTab: (tab) => set({ activeTab: tab }),
-  theme: 'light',
+  theme: 'dark',
   setTheme: (theme) => set({ theme }),
+  density: 'comfortable',
+  setDensity: (density) => set({ density }),
   sidebarCollapsed: false,
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
   connectionStatus: 'disconnected',

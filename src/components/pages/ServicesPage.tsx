@@ -8,6 +8,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import QuickBindModal from '@/components/modals/QuickBindModal'
 import { listTunnels, getTunnelConfig, unbindIngress, type Tunnel, type IngressRule } from '@/lib/api'
+import { toast } from '@/lib/toast'
 
 export default function ServicesPage() {
   const [showBindModal, setShowBindModal] = useState(false)
@@ -16,7 +17,6 @@ export default function ServicesPage() {
   const [selectedTunnel, setSelectedTunnel] = useState('')
   const [ingress, setIngress] = useState<IngressRule[]>([])
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -31,14 +31,10 @@ export default function ServicesPage() {
 
   const fetchConfig = useCallback(async () => {
     if (!selectedTunnel) return
-    setLoading(true); setError(null)
+    setLoading(true)
     const resp = await getTunnelConfig(selectedTunnel)
-    if (resp.success && resp.data) {
-      setIngress(resp.data)
-    } else if (resp.error) {
-      setError(resp.error.message)
-      setIngress([])
-    }
+    if (resp.success && resp.data) setIngress(resp.data)
+    else if (resp.error) { toast.error(resp.error.message); setIngress([]) }
     setLoading(false)
   }, [selectedTunnel])
 
@@ -46,143 +42,82 @@ export default function ServicesPage() {
 
   const handleUnbind = async (hostname: string) => {
     if (!selectedTunnel) return
-    setError(null)
     const resp = await unbindIngress(selectedTunnel, hostname)
-    if (resp.success) {
-      fetchConfig()
-    } else if (resp.error) {
-      setError(resp.error.message)
-    }
+    if (resp.success) { toast.success(`已解绑 ${hostname}`); fetchConfig() }
+    else if (resp.error) toast.error(resp.error.message)
   }
 
-  // 只显示有 hostname 的规则（排除 catch-all）
-  const services = ingress.filter(r => r.hostname)
-  const filtered = services.filter(r =>
+  const services = ingress.filter((r) => r.hostname)
+  const filtered = services.filter((r) =>
     (r.hostname || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.service.toLowerCase().includes(searchQuery.toLowerCase())
+    r.service.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   return (
-    <div className="space-y-5">
-      {/* 统计概览 */}
-      {services.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <Card className="p-3 text-center">
-            <p className="text-lg font-bold text-foreground">{services.length}</p>
-            <p className="text-[10px] text-muted-foreground">已绑定服务</p>
-          </Card>
-          <Card className="p-3 text-center">
-            <p className="text-lg font-bold text-primary">
-              {services.filter(r => r.service.startsWith('http')).length}
-            </p>
-            <p className="text-[10px] text-muted-foreground">HTTP 服务</p>
-          </Card>
-          <Card className="p-3 text-center hidden sm:block">
-            <p className="text-lg font-bold text-success">
-              {services.filter(r => r.service.includes('tcp') || r.service.includes('ssh') || r.service.includes('rdp')).length}
-            </p>
-            <p className="text-[10px] text-muted-foreground">TCP 服务</p>
-          </Card>
+    <div className="p-6 space-y-4">
+      {/* Header */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-lg font-semibold text-fg">本地服务</h1>
+          <p className="text-xs text-fg-2 mt-0.5">{services.length} 个已绑定服务</p>
         </div>
-      )}
-
-      {/* 隧道选择 + 操作 */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="flex-1">
-          <Select
-            value={selectedTunnel}
-            onChange={(e) => setSelectedTunnel(e.target.value)}
-            options={tunnels.length > 0 ? tunnels : [{ value: '', label: '暂无隧道' }]}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={fetchConfig} disabled={loading}
-            icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />} />
-          <Button variant="primary" size="sm" onClick={() => setShowBindModal(true)}
-            disabled={!selectedTunnel} icon={<Zap className="w-3.5 h-3.5" />}>
-            一键绑定
-          </Button>
-        </div>
+        <Button variant="primary" size="sm" onClick={() => setShowBindModal(true)} disabled={!selectedTunnel}
+          icon={<Zap className="w-3.5 h-3.5" />}>
+          一键绑定
+        </Button>
       </div>
 
-      {/* 搜索 */}
+      {/* Tunnel select + refresh */}
+      <div className="flex items-center gap-2">
+        <div className="flex-1 max-w-xs">
+          <Select value={selectedTunnel} onChange={(e) => setSelectedTunnel(e.target.value)}
+            options={tunnels.length > 0 ? tunnels : [{ value: '', label: '暂无隧道' }]} />
+        </div>
+        <Button variant="ghost" size="sm" onClick={fetchConfig} disabled={loading}
+          icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />} />
+      </div>
+
+      {/* Search */}
       {services.length > 0 && (
         <Input type="text" placeholder="搜索服务..." value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           leftIcon={<Search className="w-3.5 h-3.5" />} />
       )}
 
-      {/* 错误 */}
-      {error && (
-        <div className="px-4 py-3 bg-danger-glow border border-border-subtle rounded-xl animate-slide-down">
-          <p className="text-danger text-xs">{error}</p>
-        </div>
-      )}
-
-      {/* Ingress 规则列表 */}
+      {/* Service list */}
       {filtered.length > 0 ? (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {filtered.map((rule, idx) => (
-            <Card key={rule.hostname || idx} hover className="p-4">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                {/* 左侧：hostname → service */}
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-8 h-8 rounded-xl bg-primary-glow flex items-center justify-center flex-shrink-0">
-                    <Globe className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 flex-1">
-                    <span className="text-sm font-semibold text-foreground truncate">{rule.hostname}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground hidden sm:block flex-shrink-0" />
-                    <div className="flex items-center gap-1.5">
-                      <Server className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-xs font-mono text-success truncate">{rule.service}</span>
-                    </div>
-                  </div>
-                </div>
-                {/* 右侧：操作 */}
-                <Button variant="ghost" size="sm"
-                  onClick={() => rule.hostname && handleUnbind(rule.hostname)}
-                  icon={<Trash2 className="w-3.5 h-3.5 text-danger" />}
-                />
+            <div key={rule.hostname || idx} className="flex items-center h-row px-3 rounded-md hover:bg-surface-1 transition-colors group">
+              <Globe className="w-4 h-4 text-primary flex-shrink-0 mr-2" />
+              <span className="text-sm text-fg truncate flex-1">{rule.hostname}</span>
+              <ArrowRight className="w-3 h-3 text-fg-3 mx-2" />
+              <div className="flex items-center gap-1.5 min-w-0">
+                <Server className="w-3 h-3 text-success flex-shrink-0" />
+                <span className="text-xs font-mono text-success truncate">{rule.service}</span>
               </div>
-            </Card>
+              <button onClick={() => rule.hostname && handleUnbind(rule.hostname)}
+                className="p-1.5 rounded-md text-fg-3 hover:text-danger hover:bg-danger-tint transition-colors ml-2 opacity-0 group-hover:opacity-100">
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
           ))}
-          {/* Catch-all 显示 */}
-          {ingress.some(r => !r.hostname) && (
-            <Card className="p-3 opacity-50">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-lg bg-surface flex items-center justify-center">
-                  <span className="text-[10px] text-muted-foreground">*</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  默认 (catch-all): {ingress.find(r => !r.hostname)?.service || 'http_status:404'}
-                </span>
-              </div>
-            </Card>
+          {ingress.some((r) => !r.hostname) && (
+            <div className="flex items-center h-row px-3 text-xs text-fg-3">
+              <span className="mr-2">*</span>
+              默认: {ingress.find((r) => !r.hostname)?.service || 'http_status:404'}
+            </div>
           )}
         </div>
       ) : !loading ? (
-        <Card className="py-16 text-center">
-          <div className="space-y-3">
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-surface flex items-center justify-center">
-              <Zap className="w-6 h-6 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">暂无服务绑定</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                点击「一键绑定」将本地端口映射到域名
-              </p>
-            </div>
-          </div>
+        <Card className="py-12 text-center">
+          <Zap className="w-8 h-8 text-fg-3 mx-auto mb-2" />
+          <p className="text-sm text-fg">暂无服务绑定</p>
+          <p className="text-xs text-fg-2 mt-1">点击「一键绑定」映射本地端口到域名</p>
         </Card>
       ) : null}
 
-      <QuickBindModal
-        isOpen={showBindModal}
-        onClose={() => setShowBindModal(false)}
-        onSuccess={fetchConfig}
-        preselectedTunnelId={selectedTunnel}
-      />
+      <QuickBindModal isOpen={showBindModal} onClose={() => setShowBindModal(false)} onSuccess={fetchConfig} preselectedTunnelId={selectedTunnel} />
     </div>
   )
 }
