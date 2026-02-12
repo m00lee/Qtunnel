@@ -1,0 +1,24 @@
+[package]
+name = "qtunnel"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri = { version = "2", features = [] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "blocking"] }
+mlua = { version = "0.10", features = ["lua54", "vendored", "serialize"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite"] }
+thiserror = "1.0"
+lru = "0.12"
+
+[dev-dependencies]

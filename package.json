@@ -1,0 +1,36 @@
+{
+  "name": "qtunnel",
+  "version": "0.1.0",
+  "description": "Cloudflare Tunnel Management Tool",
+  "author": "Your Name",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.21.0",
+    "@tauri-apps/api": "^2",
+    "clsx": "^2.0.0",
+    "lexical": "^0.21.0",
+    "lucide-react": "^0.292.0",
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.4.2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.2.2"
+  }
+}

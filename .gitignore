@@ -1,0 +1,51 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Next.js
+.next
+out
+build
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment & Credentials — NEVER commit real tokens
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# User config (production config lives in ~/.config/qtunnel/)
+config.json
+
+# Database
+*.db
+*.sqlite
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tauri
+src-tauri/target
+dist
+
+# Logs
+logs
+*.log
+npm-debug.log*
