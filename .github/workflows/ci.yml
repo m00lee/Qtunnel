@@ -8,12 +8,10 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  # CI 环境使用空凭据，仅编译检查
   CF_API_TOKEN: ""
   CF_ACCOUNT_ID: ""
 
 jobs:
-  # ── 安全扫描：确认无硬编码凭据 ──────────────────────
   secret-scan:
     name: Secret Leak Scan
     runs-on: ubuntu-latest
@@ -23,7 +21,6 @@ jobs:
       - name: Check for hardcoded credentials
         run: |
           echo "Scanning for potential hardcoded tokens..."
-          # 排除 .env.example（里面是占位符）和此工作流文件本身
           FOUND=$(grep -rn --include='*.rs' --include='*.ts' --include='*.tsx' --include='*.json' \
             -E '(n0_FGk|64c5521f|api_token\s*=\s*"[a-zA-Z0-9_-]{20,}")' \
             --exclude-dir=target --exclude-dir=node_modules --exclude-dir=.git \
@@ -33,11 +30,10 @@ jobs:
             echo "$FOUND"
             exit 1
           fi
-          echo "✓ No hardcoded credentials detected."
+          echo "No hardcoded credentials detected."
 
-  # ── 前端检查 ────────────────────────────────────────
   frontend:
-    name: Frontend Lint & Build
+    name: Frontend (TypeScript + Build)
     runs-on: ubuntu-latest
     needs: secret-scan
     steps:
@@ -58,9 +54,8 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-  # ── 后端检查 ────────────────────────────────────────
   backend:
-    name: Rust Check & Clippy
+    name: Rust (Check + Clippy)
     runs-on: ubuntu-latest
     needs: secret-scan
     steps:
@@ -76,7 +71,8 @@ jobs:
             librsvg2-dev \
             libssl-dev \
             libsoup-3.0-dev \
-            libjavascriptcoregtk-4.1-dev
+            libjavascriptcoregtk-4.1-dev \
+            patchelf
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -96,7 +92,6 @@ jobs:
         run: cargo clippy -- -D warnings
         working-directory: src-tauri
 
-  # ── Tauri 构建（仅 main 分支） ─────────────────────
   build:
     name: Build Tauri App
     runs-on: ubuntu-latest
@@ -115,7 +110,8 @@ jobs:
             librsvg2-dev \
             libssl-dev \
             libsoup-3.0-dev \
-            libjavascriptcoregtk-4.1-dev
+            libjavascriptcoregtk-4.1-dev \
+            patchelf
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

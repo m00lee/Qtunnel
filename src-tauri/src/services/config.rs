@@ -3,6 +3,7 @@ use crate::credential::CredentialStore;
 use crate::models::{ApiResponse, TokenVerifyResult};
 use tauri::State;
 
+#[allow(clippy::too_many_arguments)]
 #[tauri::command]
 pub async fn save_settings(
     api_token: String,

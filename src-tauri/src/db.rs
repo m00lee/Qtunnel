@@ -6,6 +6,12 @@ pub struct Database {
     pool: Option<Pool<sqlx::Sqlite>>,
 }
 
+impl Default for Database {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Database {
     pub fn new() -> Self {
         Database { pool: None }

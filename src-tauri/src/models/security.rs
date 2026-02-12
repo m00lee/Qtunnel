@@ -12,6 +12,7 @@ pub struct WafRule {
     pub enabled: bool,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IpRule {
     pub id: String,
@@ -22,6 +23,7 @@ pub struct IpRule {
     pub enabled: bool,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum IpRuleType {

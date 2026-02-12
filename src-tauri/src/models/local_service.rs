@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LocalService {
     pub id: String,
@@ -13,6 +14,7 @@ pub struct LocalService {
     pub created_at: DateTime<Utc>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ServiceStatus {
     #[serde(rename = "active")]
@@ -23,6 +25,7 @@ pub enum ServiceStatus {
     Error,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServiceMetrics {
     pub service_id: String,
@@ -33,6 +36,7 @@ pub struct ServiceMetrics {
     pub last_check: DateTime<Utc>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BindServiceRequest {
     pub tunnel_id: String,

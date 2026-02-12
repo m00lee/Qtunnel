@@ -13,6 +13,12 @@ pub struct CFApi {
     proxy_no_verify: bool,
 }
 
+impl Default for CFApi {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CFApi {
     pub fn new() -> Self {
         CFApi {

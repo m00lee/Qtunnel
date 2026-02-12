@@ -116,7 +116,7 @@ pub async fn unbind_ingress(
     }
 
     // 确保至少有 catch-all 规则
-    if ingress.is_empty() || ingress.last().map_or(true, |r| r.hostname.is_some()) {
+    if ingress.is_empty() || ingress.last().is_none_or(|r| r.hostname.is_some()) {
         ingress.push(CfIngressRule {
             hostname: None,
             service: "http_status:404".to_string(),

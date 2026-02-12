@@ -52,7 +52,8 @@ impl CredentialStore {
         Some((token.to_string(), account_id.to_string()))
     }
 
-    /// 删除凭据文件
+    /// Delete credential file
+    #[allow(dead_code)]
     pub fn delete() -> Result<(), String> {
         let path = Self::cred_path();
         if path.exists() {
