@@ -2,181 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========== 深色优先色彩系统 ========== */
+/* ═══ Design Tokens – Light ═══ */
 :root {
-  --background: #f5f5f7;
-  --foreground: #1d1d1f;
-  --card: #ffffff;
-  --card-foreground: #1d1d1f;
-  --card-hover: #f0f0f2;
-  --surface: #e8e8ed;
-  --primary: #576eff;
-  --primary-foreground: #ffffff;
-  --primary-glow: rgba(87, 110, 255, 0.15);
-  --secondary: #86868b;
-  --secondary-foreground: #ffffff;
-  --success: #30d158;
-  --success-glow: rgba(48, 209, 88, 0.15);
-  --danger: #ff453a;
-  --danger-glow: rgba(255, 69, 58, 0.15);
-  --warning: #b8860b;
-  --warning-glow: rgba(184, 134, 11, 0.15);
+  --bg: #f5f5f7;
+  --surface-0: #ffffff;
+  --surface-1: #f0f0f2;
+  --surface-2: #e8e8ed;
+
+  --text: #1d1d1f;
+  --text-2: #86868b;
+  --text-3: #aeaeb2;
+
   --border: #d2d2d7;
-  --border-subtle: #e5e5ea;
-  --input: #f5f5f7;
-  --muted: #e8e8ed;
-  --muted-foreground: #86868b;
-  --sidebar: #ffffff;
-  --sidebar-active: rgba(87, 110, 255, 0.1);
-  --overlay: rgba(0, 0, 0, 0.4);
-  --ring: rgba(87, 110, 255, 0.3);
-  --radius: 12px;
+  --border-subtle: #ebebf0;
+
+  --primary: #007aff;
+  --primary-hover: #0062cc;
+  --primary-active: #004ea3;
+  --primary-text: #ffffff;
+  --primary-tint: rgba(0, 122, 255, 0.1);
+
+  --success: #34c759;
+  --success-tint: rgba(52, 199, 89, 0.1);
+
+  --warning: #ff9f0a;
+  --warning-tint: rgba(255, 159, 10, 0.1);
+
+  --danger: #ff3b30;
+  --danger-tint: rgba(255, 59, 48, 0.1);
+
+  --overlay: rgba(0, 0, 0, 0.25);
+  --ring: #007aff;
+
+  /* Density — comfortable (default) */
+  --ctrl-h: 32px;
+  --ctrl-h-sm: 28px;
+  --row-h: 40px;
+  --titlebar-h: 38px;
 }
 
+/* ═══ Design Tokens – Dark ═══ */
 .dark {
-  --background: #0c0c0e;
-  --foreground: #e5e5ea;
-  --card: #1c1c1e;
-  --card-foreground: #e5e5ea;
-  --card-hover: #2c2c2e;
-  --surface: #2c2c2e;
-  --primary: #6b7cff;
-  --primary-foreground: #ffffff;
-  --primary-glow: rgba(107, 124, 255, 0.2);
-  --secondary: #8e8e93;
-  --secondary-foreground: #ffffff;
-  --success: #30d158;
-  --success-glow: rgba(48, 209, 88, 0.12);
-  --danger: #ff453a;
-  --danger-glow: rgba(255, 69, 58, 0.12);
-  --warning: #ffd60a;
-  --warning-glow: rgba(255, 214, 10, 0.12);
+  --bg: #1c1c1e;
+  --surface-0: #2c2c2e;
+  --surface-1: #3a3a3c;
+  --surface-2: #48484a;
+
+  --text: #f5f5f7;
+  --text-2: #98989d;
+  --text-3: #636366;
+
   --border: #38383a;
   --border-subtle: #2c2c2e;
-  --input: #1c1c1e;
-  --muted: #2c2c2e;
-  --muted-foreground: #8e8e93;
-  --sidebar: #161618;
-  --sidebar-active: rgba(107, 124, 255, 0.12);
-  --overlay: rgba(0, 0, 0, 0.6);
-  --ring: rgba(107, 124, 255, 0.4);
+
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
+  --primary-active: #64b5f6;
+  --primary-text: #ffffff;
+  --primary-tint: rgba(10, 132, 255, 0.15);
+
+  --success: #30d158;
+  --success-tint: rgba(48, 209, 88, 0.12);
+
+  --warning: #ff9f0a;
+  --warning-tint: rgba(255, 159, 10, 0.12);
+
+  --danger: #ff453a;
+  --danger-tint: rgba(255, 69, 58, 0.12);
+
+  --overlay: rgba(0, 0, 0, 0.5);
+  --ring: #0a84ff;
 }
 
-/* ========== 基础样式 ========== */
-* {
-  border-color: var(--border-subtle);
+/* ═══ Density – Compact ═══ */
+[data-density="compact"] {
+  --ctrl-h: 28px;
+  --ctrl-h-sm: 24px;
+  --row-h: 32px;
+  --titlebar-h: 32px;
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ═══ Base Layer ═══ */
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  *::selection {
+    background: var(--primary-tint);
+    color: var(--text);
+  }
+
+  input, textarea, [contenteditable] {
+    user-select: text;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-tint);
+    border-color: var(--primary);
+  }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  overflow: hidden;
-}
-
-/* ========== 滚动条 ========== */
+/* ═══ Scrollbar ═══ */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+::-webkit-scrollbar-thumb { background: var(--text-3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-2); }
 
-/* ========== 表单元素 ========== */
-button { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-input, textarea, select { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-input:disabled, textarea:disabled, select:disabled { opacity: 0.4; cursor: not-allowed; }
+/* ═══ Animations ═══ */
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.97) } to { opacity: 1; transform: scale(1) } }
 
-/* ========== 链接 ========== */
-a { color: var(--primary); text-decoration: none; transition: opacity 0.15s ease; }
-a:hover { opacity: 0.8; }
+.animate-fade-in { animation: fade-in 0.15s ease-out; }
+.animate-slide-up { animation: slide-up 0.2s ease-out; }
+.animate-scale-in { animation: scale-in 0.15s ease-out; }
 
-/* ========== 焦点可视性 ========== */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: none; /* 这些元素使用 ring 而非 outline */
-}
-
-/* ========== 代码 ========== */
-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85em;
-  background: var(--muted);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-pre {
-  background: var(--card);
-  padding: 16px;
-  border-radius: var(--radius);
-  overflow-x: auto;
-  border: 1px solid var(--border-subtle);
-}
-pre code { background: transparent; padding: 0; }
-
-/* ========== 选中文本 ========== */
-::selection {
-  background-color: var(--primary-glow);
-  color: var(--foreground);
-}
-
-/* ========== 动画关键帧 ========== */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
-  50% { box-shadow: 0 0 0 6px transparent; }
-}
-
-.animate-fade-in { animation: fadeIn 0.3s ease-out; }
-.animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.animate-slide-down { animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.animate-scale-in { animation: scaleIn 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* ========== 毛玻璃效果 ========== */
-.glass {
-  background: color-mix(in srgb, var(--card) 80%, transparent);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-}
-
-.glass-subtle {
-  background: color-mix(in srgb, var(--card) 60%, transparent);
-  backdrop-filter: blur(8px) saturate(150%);
-  -webkit-backdrop-filter: blur(8px) saturate(150%);
-}
-
-/* ========== 辉光效果 ========== */
-.glow-primary {
-  box-shadow: 0 0 20px var(--primary-glow), 0 0 60px color-mix(in srgb, var(--primary-glow) 30%, transparent);
-}
-
-/* ========== Tauri 窗口拖拽 ========== */
-.drag-region { -webkit-app-region: drag; }
-.no-drag { -webkit-app-region: no-drag; }
+/* ═══ Lua Editor (preserved) ═══ */
+.lua-editor-wrapper { font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace; }
+.lua-editor-line { margin: 0; padding: 0; }

@@ -1,34 +1,32 @@
-import React from 'react'
+import { forwardRef } from 'react'
 import clsx from 'clsx'
 
-interface SelectOption {
-  value: string
-  label: string
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  options: { value: string; label: string }[]
 }
 
-interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'children'> {
-  options: SelectOption[]
-}
+const chevronSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
 
-export default function Select({ options, className, ...props }: SelectProps) {
-  return (
+const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  ({ options, className, ...props }, ref) => (
     <select
+      ref={ref}
       className={clsx(
-        'w-full px-3.5 py-2 rounded-xl text-sm',
-        'bg-input border border-border-subtle text-foreground',
-        'focus:outline-none focus:border-primary focus:ring-1 focus:ring-ring',
-        'focus-visible:ring-2 focus-visible:ring-ring',
-        'transition-all duration-200',
-        'disabled:opacity-40 disabled:pointer-events-none',
-        className
+        'w-full h-ctrl rounded-md border border-sep bg-surface-0 px-3 pr-8 text-sm text-fg',
+        'transition-colors appearance-none',
+        'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
+        'disabled:opacity-40 disabled:cursor-not-allowed',
+        className,
       )}
+      style={{ backgroundImage: chevronSvg, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', backgroundSize: '16px' }}
       {...props}
     >
-      {options.map((opt) => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
-        </option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
       ))}
     </select>
-  )
-}
+  ),
+)
+
+Select.displayName = 'Select'
+export default Select
